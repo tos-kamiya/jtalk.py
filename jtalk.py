@@ -65,7 +65,7 @@ def convert_english_words(L):
 wav_file_template = "/tmp/open_jtalk_%d.wav"
 
 
-def speech_lines(lines, show_text=False):
+def speech_lines(lines, shown_lines=None):
     open_jtalk=['open_jtalk']
     mech=['-x','/var/lib/mecab/dic/open-jtalk/naist-jdic']
     htsvoice=['-m','/usr/share/hts-voice/mei/mei_normal.htsvoice']
@@ -83,8 +83,8 @@ def speech_lines(lines, show_text=False):
         c.wait()
         if speech_process is not None:
             speech_process.wait()
-        if show_text:
-            print(L, file=sys.stderr)
+        if shown_lines:
+            print(shown_lines[i], file=sys.stderr)
         speech_process= subprocess.Popen(play_cmd + [wav_file])
     if speech_process is not None:
         speech_process.wait()
@@ -136,9 +136,10 @@ def main():
         lines = [L for L in lines if includes_japanese(L)]
 
     if args['--yomi']:
-        lines = [convert_english_words(L) for L in lines]
-
-    speech_lines(lines, show_text=args['-t'])
+        yomi_lines = [convert_english_words(L) for L in lines]
+        speech_lines(yomi_lines, shown_lines=args['-t'] and lines)
+    else:
+        speech_lines(lines, shown_lines=args['-t'] and lines)
 
 
 if __name__ == '__main__':
