@@ -34,6 +34,9 @@ sudo cp -r MMDAgent_Example-1.8/Voice/mei/ /usr/share/hts-voice
 jtalk.py [オプション] [テキストファイル]
 ```
 
+「テキストファイル」を指定しなかった場合は現在の日時を読み上げます。
+パイプからテキストを読み込むには「-」を指定してください。
+
 オプション
 
 ```sh
@@ -55,10 +58,9 @@ jtalk.py -t -j README.md
 lynx -dump -nolist https://toshihirokamiya.com/index-j.html | jtalk.py -t -j --yomi -
 ```
 
-
 ## ライセンス
 
-同梱ファイル`eng_yomi_data.tsv`のライセンスは次の元データのライセンスに従います。
+同梱ファイル`jtalkpy_eng_yomi_data.tsv`のライセンスは次の元データのライセンスに従います。
 
 https://github.com/KEINOS/google-ime-user-dictionary-ja-en
 
@@ -66,4 +68,18 @@ https://github.com/KEINOS/google-ime-user-dictionary-ja-en
 それから拡張した部分に関してはパブリックドメインといたします。
 
 https://qiita.com/kkoba84/items/b828229c374a249965a9
+
+## 開発
+
+### jtalkpy_eng_yomi_data.tsvを生成する方法
+
+このjtalk.pyリポジトリをgit cloneし、
+
+https://github.com/tos-kamiya/jtalk.py
+
+ルートディレクトリで次のリポジトリをgit cloneして、
+
+https://github.com/KEINOS/google-ime-user-dictionary-ja-en
+
+`gen_eng_yomi_data.py`を実行してください。
 
