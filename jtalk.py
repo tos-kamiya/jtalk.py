@@ -86,13 +86,14 @@ def parse_lines(text, marge_lines=False):
 wav_file_template = "/tmp/open_jtalk_%d.wav"
 
 
-def speech_lines(lines, shown_lines=None):
-    open_jtalk=['open_jtalk']
-    mech=['-x','/var/lib/mecab/dic/open-jtalk/naist-jdic']
-    htsvoice=['-m','/usr/share/hts-voice/mei/mei_normal.htsvoice']
-    speed=['-r','1.0']
-    outwav=['-ow']
-    wav_gen_cmd = open_jtalk + mech + htsvoice + speed + outwav
+def speech_lines(lines, shown_lines=None, speed=None, volume=None):
+    open_jtalk = ['open_jtalk']
+    mech = ['-x', '/var/lib/mecab/dic/open-jtalk/naist-jdic']
+    htsvoice = ['-m', '/usr/share/hts-voice/mei/mei_normal.htsvoice']
+    s = ['-r', '%g' % (1.0 if speed is None else speed)]
+    v = ['-g', '%g' % (10.0 if volume is None else volume)]
+    outwav = ['-ow']
+    wav_gen_cmd = open_jtalk + mech + htsvoice + s + v + outwav
     play_cmd = ['aplay','-q']
 
     speech_process = None
@@ -128,6 +129,8 @@ Usage:
   jtalk [options] [<textfile>]
 
 Options:
+  -r SPEED  読み上げ速度[default: 1.0]
+  -g VOL    読み上げ音量[default: 10.0]
   -t        発声されているテキストを表示する
   -j        日本語が含まれない行をスキップする
   --yomi    英単語を読み（カタカナ）に変換する
@@ -145,6 +148,9 @@ def main():
         with open(args['<textfile>']) as inp:
             text = inp.read()
 
+    speed = float(args['-r']) if args['-r'] else None
+    volume = float(args['-g']) if args['-g'] else None
+
     lines = parse_lines(text, marge_lines=args['-N'])
 
     if args['-j']:
@@ -152,9 +158,9 @@ def main():
 
     if args['--yomi']:
         yomi_lines = [convert_english_words(L) for L in lines]
-        speech_lines(yomi_lines, shown_lines=args['-t'] and lines)
+        speech_lines(yomi_lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume)
     else:
-        speech_lines(lines, shown_lines=args['-t'] and lines)
+        speech_lines(lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume)
 
 
 if __name__ == '__main__':
