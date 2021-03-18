@@ -62,6 +62,27 @@ def convert_english_words(L):
     return ''.join(ys)
 
 
+def parse_lines(text, marge_lines=False):
+    if marge_lines:
+        text = re.sub(r'\n\s*(?<=[a-zA-Z])', ' ', text)
+        text = re.sub(r'\n\s*(?<=[^a-zA-Z])', '', text)
+        text = text.replace('\n\n', '。')
+
+    lines = re.split(r"([。\n]+)", text)
+    r = []
+    for L in lines:
+        if not L:
+            pass
+        elif re.fullmatch(r"[。\n]+", L):
+            if r and "。" in L:
+                r[-1] += "。"
+        else:
+            r.append(L)
+    lines = r
+
+    return lines
+
+
 wav_file_template = "/tmp/open_jtalk_%d.wav"
 
 
@@ -123,14 +144,8 @@ def main():
     else:
         with open(args['<textfile>']) as inp:
             text = inp.read()
-    
-    if args['-N']:
-        text = text.replace('\n\n', '。')
-        text = re.sub(r'\n\s*(?<=[a-zA-Z])', ' ', text)
-        text = re.sub(r'\n\s*(?<=[^a-zA-Z])', '', text)
-        lines = re.split(r"。", text)
-    else:
-        lines = re.split(r"[。\n]", text)
+
+    lines = parse_lines(text, marge_lines=args['-N'])
 
     if args['-j']:
         lines = [L for L in lines if includes_japanese(L)]
