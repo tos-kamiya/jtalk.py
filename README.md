@@ -1,7 +1,8 @@
 jtalk.py
 =========
 
-日本語テキスト読み上げスクリプト（オレオレ仕様）。Ubuntu 20.04で動作確認
+日本語テキスト読み上げスクリプト（オレオレ仕様）。  
+**Ubuntu 20.04で動作確認**。
 
 ## セットアップ
 
@@ -12,19 +13,19 @@ sudo python3 -m pip install docopt
 ```
 
 (2) Open JTalkのセットアップ
-```
+```sh
 sudo apt-get install open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
 ```
 
 (3) 音声ファイルのセットアップ
 
-```
+```sh
 wget https://sourceforge.net/projects/mmdagent/files/MMDAgent_Example/MMDAgent_Example-1.8/MMDAgent_Example-1.8.zip/download -O MMDAgent_Example-1.8.zip
 unzip MMDAgent_Example-1.8.zip
 sudo cp -r MMDAgent_Example-1.8/Voice/mei/ /usr/share/hts-voice
 ```
 
-(4) パスが通ったディレクトリ、ファイル`jtalk.py`と`jtalkpy_eng_yomi_data.tsv`をコピーする
+(4) パスが通ったディレクトリに、ファイル`jtalk.py`と`jtalkpy_eng_yomi_data.tsv`をコピーする
 
 ## 利用法
 
@@ -35,7 +36,7 @@ jtalk.py [オプション] [テキストファイル]
 ```
 
 「テキストファイル」を指定しなかった場合は現在の日時を読み上げます。
-パイプからテキストを読み込むには「-」を指定してください。
+パイプからテキストを読み込むには「-」を指定してください(例2を参照)。
 
 オプション
 
@@ -48,13 +49,13 @@ jtalk.py [オプション] [テキストファイル]
   -N        改行で文を区切らないようにする
 ```
 
-（例） このファイルを読み上げさせる例
+（例1） このファイルを読み上げさせる例
 
 ```sh
 jtalk.py -t -j README.md
 ```
 
-（例） ウェブページを読み上げさせる例（別途lynxが必要）
+（例2） ウェブページを読み上げさせる例（別途lynxが必要）
 
 ```sh
 lynx -dump -nolist https://toshihirokamiya.com/index-j.html | jtalk.py -t -j --yomi -
