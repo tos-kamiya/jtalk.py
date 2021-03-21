@@ -40,12 +40,14 @@ if os.path.isfile(eng_yomi_data_file):
 else:
     eng_yomi_data = None
 
+
+def is_japanese(ch):
+    name = unicodedata.name(ch) 
+    return "CJK UNIFIED" in name or "HIRAGANA" in name or "KATAKANA" in name
+
+
 def includes_japanese(s):
-    for ch in s:
-        name = unicodedata.name(ch) 
-        if "CJK UNIFIED" in name or "HIRAGANA" in name or "KATAKANA" in name:
-            return True
-    return False
+    return any(is_japanese(ch) for ch in s)
 
 
 def is_english_word(s):
@@ -67,6 +69,18 @@ def parse_lines(text, marge_lines=False):
         text = re.sub(r'\n\s*(?<=[a-zA-Z])', ' ', text)
         text = re.sub(r'\n\s*(?<=[^a-zA-Z])', '', text)
         text = text.replace('\n\n', '。')
+
+    # remove spaces between zenkaku and hankaku
+    text = re.sub(r'((?!\n)\s)+', ' ', text)
+    s = list(text)
+    for i in range(1, len(text) - 1):
+        prev_ch, ch, next_ch = s[i-1], s[i], s[i+1]
+        if ch == ' ':
+            prev_ch_is_japanese = is_japanese(prev_ch)
+            next_ch_is_japanese = is_japanese(next_ch)
+            if prev_ch_is_japanese and not next_ch_is_japanese or not prev_ch_is_japanese and next_ch_is_japanese:
+                s[i] = ''
+    text = ''.join(s)
 
     lines = re.split(r"([。\n]+)", text)
     r = []
