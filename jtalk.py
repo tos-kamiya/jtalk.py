@@ -42,8 +42,9 @@ else:
 
 
 def is_japanese(ch):
-    name = unicodedata.name(ch) 
-    return "CJK UNIFIED" in name or "HIRAGANA" in name or "KATAKANA" in name
+    name = unicodedata.name(ch, None)
+    return name is not None and \
+            ("CJK UNIFIED" in name or "HIRAGANA" in name or "KATAKANA" in name)
 
 
 def includes_japanese(s):
