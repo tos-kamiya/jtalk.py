@@ -1,7 +1,7 @@
 jtalk.py
 =========
 
-日本語テキスト読み上げスクリプト（オレオレ仕様）。  
+日本語テキスト読み上げスクリプト。
 **Ubuntu 20.04で動作確認**。
 
 ## セットアップ
@@ -25,7 +25,17 @@ unzip MMDAgent_Example-1.8.zip
 sudo cp -r MMDAgent_Example-1.8/Voice/mei/ /usr/share/hts-voice
 ```
 
-(4) パスが通ったディレクトリに、ファイル`jtalk.py`と`jtalkpy_eng_yomi_data.tsv`をコピーする
+(4) alkanaのインストール
+
+```sh
+sudo python3 -m pip install git+https://github.com/cod-sushi/alkana.py
+```
+
+(5) パスが通ったディレクトリに、ファイル`jtalk.py`をコピーする
+
+### アンインストール
+
+ファイル`jtalk.py`を削除してください
 
 ## 利用法
 
@@ -63,26 +73,7 @@ lynx -dump -nolist https://toshihirokamiya.com/index-j.html | jtalk.py -t -j --y
 
 ## ライセンス
 
-同梱ファイル`jtalkpy_eng_yomi_data.tsv`のライセンスは次の元データのライセンスに従います。
-
-https://github.com/KEINOS/google-ime-user-dictionary-ja-en
-
 スクリプト`jtalk.py`の読み上げ機能部分は次から流用しています。
 それから拡張した部分に関してはパブリックドメインといたします。
 
 https://qiita.com/kkoba84/items/b828229c374a249965a9
-
-## 開発
-
-### jtalkpy_eng_yomi_data.tsvを生成する方法
-
-このjtalk.pyリポジトリをgit cloneし、
-
-https://github.com/tos-kamiya/jtalk.py
-
-ルートディレクトリで次のリポジトリをgit cloneして、
-
-https://github.com/KEINOS/google-ime-user-dictionary-ja-en
-
-`gen_eng_yomi_data.py`を実行してください。
-
