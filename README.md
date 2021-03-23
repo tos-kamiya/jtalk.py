@@ -1,23 +1,22 @@
 jtalk.py
 =========
 
-日本語テキスト読み上げスクリプト。
+日本語テキスト読み上げCLIツール。
 **Ubuntu 20.04で動作確認**。
+
+特徴
+
+* 英単語もカタカナ読みにするオプション(--yomi)
+* 読み上げている箇所を表示するオプション(-t)
 
 ## セットアップ
 
-(1) Docoptのインストール
-
-```sh
-sudo python3 -m pip install docopt
-```
-
-(2) Open JTalkのセットアップ
+(1) Open JTalkのセットアップ
 ```sh
 sudo apt-get install open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
 ```
 
-(3) 音声ファイルのセットアップ
+(2) 音声ファイルのセットアップ
 
 ```sh
 wget https://sourceforge.net/projects/mmdagent/files/MMDAgent_Example/MMDAgent_Example-1.8/MMDAgent_Example-1.8.zip/download -O MMDAgent_Example-1.8.zip
@@ -25,17 +24,17 @@ unzip MMDAgent_Example-1.8.zip
 sudo cp -r MMDAgent_Example-1.8/Voice/mei/ /usr/share/hts-voice
 ```
 
-(4) alkanaのインストール
+(3) jtalk.pyのインストール
 
 ```sh
-sudo python3 -m pip install git+https://github.com/cod-sushi/alkana.py
+python3 -m pip install git+https://github.com/tos-kamiya/jtalk.py
 ```
-
-(5) パスが通ったディレクトリに、ファイル`jtalk.py`をコピーする
 
 ### アンインストール
 
-ファイル`jtalk.py`を削除してください
+```sh
+python3 -m pip uninstall jtalk.py
+```
 
 ## 利用法
 

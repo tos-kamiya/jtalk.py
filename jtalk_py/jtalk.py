@@ -1,37 +1,21 @@
 #!/usr/bin/env python3
 
-# 参考
-# https://qiita.com/kkoba84/items/b828229c374a249965a9
-# https://mekou.com/linux-magazine/open-jtalklinux-%E6%97%A5%E6%9C%AC%E8%AA%9E%E9%9F%B3%E5%A3%B0%E5%90%88%E6%88%90%E3%82%A8%E3%83%B3%E3%82%B8%E3%83%B3/
-# https://minus9d.hatenablog.com/entry/2015/07/16/231608
-# https://github.com/cod-sushi/alkana.py/blob/master/README_ja.md
-
-# Ubuntu 20.04で動作検証
-
-SETUP = """
-# (1) Docoptのインストール
-sudo python3 -m pip install docopt
-
-# (2) Open JTalkのセットアップ
-sudo apt-get install open-jtalk open-jtalk-mecab-naist-jdic hts-voice-nitech-jp-atr503-m001
-
-# (3) 音声ファイルのセットアップ
-wget https://sourceforge.net/projects/mmdagent/files/MMDAgent_Example/MMDAgent_Example-1.8/MMDAgent_Example-1.8.zip/download -O MMDAgent_Example-1.8.zip
-unzip MMDAgent_Example-1.8.zip
-sudo cp -r MMDAgent_Example-1.8/Voice/mei/ /usr/share/hts-voice
-
-# (4) alkanaのインストール
-sudo python3 -m pip install alkana
-"""
-
 import os
 import re
 import sys
 import subprocess
 import unicodedata
+import shutil
 
 from alkana import get_kana
 from docopt import docopt
+
+
+__version__ = '0.1.0'
+
+# check open_jtalk installation
+if not shutil.which('open_jtalk'):
+    sys.exit("Error: `open_jtalk` executable is not found.")
 
 
 def is_japanese(ch):
@@ -143,7 +127,7 @@ Options:
 
 
 def main():
-    args = docopt(__doc__)
+    args = docopt(__doc__, version=__version__)
     if not args['<textfile>']:
         text = now_text()
     elif args['<textfile>'] == '-':
