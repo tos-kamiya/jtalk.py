@@ -11,7 +11,11 @@ from alkana import get_kana
 from docopt import docopt
 
 
-__version__ = '0.1.0'
+# read version string
+_version_py_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'version.py')
+with open(_version_py_file) as inp:
+    __version__ = re.match(r"__version__\s*=\s*'(.*)'", inp.read()).group(1)
+
 
 # check open_jtalk installation
 if not shutil.which('open_jtalk'):
