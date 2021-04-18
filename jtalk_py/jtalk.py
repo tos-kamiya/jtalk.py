@@ -9,6 +9,8 @@ import shutil
 
 from alkana import get_kana
 from docopt import docopt
+import markdown
+from bs4 import BeautifulSoup
 
 
 # read version string
@@ -22,6 +24,13 @@ if not shutil.which('open_jtalk'):
     sys.exit("Error: `open_jtalk` executable is not found.")
 
 
+# ref https://stackoverflow.com/questions/761824/python-how-to-convert-markdown-formatted-text-to-text
+def md_to_text(md):
+    html = markdown.markdown(md)
+    soup = BeautifulSoup(html, features='html.parser')
+    return soup.get_text()
+    
+    
 def is_japanese(ch):
     name = unicodedata.name(ch, None)
     return name is not None and \
@@ -125,24 +134,30 @@ Options:
   -g VOL    読み上げ音量[default: 10.0]
   -t        発声されているテキストを表示する
   -j        日本語が含まれない行をスキップする
-  --yomi    英単語を読み（カタカナ）に変換する
+  -y, --yomi    英単語を読み（カタカナ）に変換する
   -N        改行で文を区切らないようにする
+  --markdown    入力テキストがmarkdownであるとして扱う
 """
 
 
 def main():
     args = docopt(__doc__, version=__version__)
-    if not args['<textfile>']:
+    input_file = args['<textfile>']
+    option_markdown = input_file.endswith('.md') or args['--markdown']
+
+    if not input_file:
         text = now_text()
-    elif args['<textfile>'] == '-':
+    elif input_file == '-':
         text = sys.stdin.read()
     else:
-        with open(args['<textfile>']) as inp:
+        with open(input_file) as inp:
             text = inp.read()
 
     speed = float(args['-r']) if args['-r'] else None
     volume = float(args['-g']) if args['-g'] else None
 
+    if option_markdown:
+        text = md_to_text(text)
     lines = parse_lines(text, marge_lines=args['-N'])
 
     if args['-j']:
