@@ -12,11 +12,8 @@ from docopt import docopt
 import markdown
 from bs4 import BeautifulSoup
 
-
-# read version string
-_version_py_file = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'version.py')
-with open(_version_py_file) as inp:
-    __version__ = re.match(r"__version__\s*=\s*'(.*)'", inp.read()).group(1)
+import importlib.metadata
+__version__ = importlib.metadata.version('jtalk.py')
 
 
 # check open_jtalk installation
