@@ -140,7 +140,7 @@ Options:
 def main():
     args = docopt(__doc__, version=__version__)
     input_file = args['<textfile>']
-    option_markdown = input_file.endswith('.md') or args['--markdown']
+    option_markdown = (input_file and input_file.endswith('.md')) or args['--markdown']
 
     if not input_file:
         text = now_text()
