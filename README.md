@@ -69,8 +69,15 @@ jtalk.py -t -j README.md
 （例2） ウェブページを読み上げさせる例（別途lynxが必要）
 
 ```sh
-lynx -dump -nolist https://toshihirokamiya.com/index-j.html | jtalk.py -t -j --yomi -
+lynx -dump -nolist https://toshihirokamiya.com/index-j.html | jtalk.py -tyj -
 ```
+
+（例3） latexのソースファイルからテキストを抽出して読み上げ（別途pandocが必要）
+
+```sh
+pandoc --to=plain --wrap=none genkou.tex | jtalk.py -tyj -
+```
+
 
 ## ライセンス
 
