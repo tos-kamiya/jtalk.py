@@ -6,6 +6,7 @@ import sys
 import subprocess
 import unicodedata
 import shutil
+import signal
 
 from alkana import get_kana
 from docopt import docopt
@@ -84,7 +85,7 @@ def parse_lines(text, marge_lines=False):
 wav_file_template = "/tmp/open_jtalk_%d.wav"
 
 
-def speech_lines(lines, shown_lines=None, speed=None, volume=None):
+def speech_lines(lines, shown_lines=None, speed=None, volume=None, speech_progress_index_box=None):
     open_jtalk = ['open_jtalk']
     mech = ['-x', '/var/lib/mecab/dic/open-jtalk/naist-jdic']
     htsvoice = ['-m', '/usr/share/hts-voice/mei/mei_normal.htsvoice']
@@ -94,8 +95,12 @@ def speech_lines(lines, shown_lines=None, speed=None, volume=None):
     wav_gen_cmd = open_jtalk + mech + htsvoice + s + v + outwav
     play_cmd = ['aplay','-q']
 
+    if speech_progress_index_box is None:
+        speech_progress_index_box = [None]
     speech_process = None
     for i, L in enumerate(lines):
+        if speech_progress_index_box[0] is not None and i < speech_progress_index_box[0]:
+            continue  # for i
         wav_file = wav_file_template % (i % 2)
         c = subprocess.Popen(wav_gen_cmd + [wav_file], stdin=subprocess.PIPE)
         c.stdin.write(L.encode())
@@ -105,7 +110,7 @@ def speech_lines(lines, shown_lines=None, speed=None, volume=None):
             speech_process.wait()
         if shown_lines:
             print(shown_lines[i], file=sys.stderr)
-        speech_process= subprocess.Popen(play_cmd + [wav_file])
+        speech_process = subprocess.Popen(play_cmd + [wav_file])
     if speech_process is not None:
         speech_process.wait()
 
@@ -127,6 +132,7 @@ Usage:
   jtalk [options] [<textfile>]
 
 Options:
+  -n INDEX  読み上げ開始位置(0〜)
   -r SPEED  読み上げ速度[default: 1.0]
   -g VOL    読み上げ音量[default: 10.0]
   -t        発声されているテキストを表示する
@@ -160,11 +166,23 @@ def main():
     if args['-j']:
         lines = [L for L in lines if includes_japanese(L)]
 
+    speech_progress_index_box = [None]
+    if args['-n']:
+        speech_progress_index_box[0] = int(args['-n'])
+    def sigint_handler(signum, frame):
+        i = speech_progress_index_box[0]
+        if i is not None:
+            print("> 読み上げを中断しました。中断位置から再開するには、オプション`-n %d`をつけて再度実行してください。" % i, file=sys.stderr)
+        sys.exit(128 + signal.SIGINT)
+    signal.signal(signal.SIGINT, sigint_handler)
+    
     if args['--yomi']:
         yomi_lines = [convert_english_words(L) for L in lines]
-        speech_lines(yomi_lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume)
+        speech_lines(yomi_lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume,
+            speech_progress_index_box=speech_progress_index_box)
     else:
-        speech_lines(lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume)
+        speech_lines(lines, shown_lines=args['-t'] and lines, speed=speed, volume=volume,
+            speech_progress_index_box=speech_progress_index_box)
 
 
 if __name__ == '__main__':
