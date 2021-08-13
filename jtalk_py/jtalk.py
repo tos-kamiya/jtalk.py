@@ -110,6 +110,7 @@ def speech_lines(lines, shown_lines=None, speed=None, volume=None, speech_progre
             speech_process.wait()
         if shown_lines:
             print(shown_lines[i], file=sys.stderr)
+        speech_progress_index_box[0] = i
         speech_process = subprocess.Popen(play_cmd + [wav_file])
     if speech_process is not None:
         speech_process.wait()
